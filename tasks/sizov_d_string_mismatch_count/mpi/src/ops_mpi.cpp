@@ -2,11 +2,12 @@
 
 #include <mpi.h>
 
-#include <algorithm>
+#include <cstddef>
 #include <string>
 #include <string_view>
 
 #include "sizov_d_string_mismatch_count/common/include/common.hpp"
+#include "util/include/util.hpp"
 
 namespace sizov_d_string_mismatch_count {
 SizovDStringMismatchCountMPI::SizovDStringMismatchCountMPI(const InType &input) {
@@ -40,17 +41,9 @@ bool SizovDStringMismatchCountMPI::RunImpl() {
     return true;
   }
 
-  const int base = total_size / size;
-  const int remainder = total_size % size;
-  const int start = (rank * base) + std::min(rank, remainder);
-  const int local_size = base + (rank < remainder ? 1 : 0);
-
-  std::string_view local_a(str_a_.data() + start, local_size);
-  std::string_view local_b(str_b_.data() + start, local_size);
-
   int local_result = 0;
-  for (int i = 0; i < local_size; ++i) {
-    if (local_a[i] != local_b[i]) {
+  for (int i = rank; i < total_size; i += size) {
+    if (str_a_[i] != str_b_[i]) {
       ++local_result;
     }
   }
