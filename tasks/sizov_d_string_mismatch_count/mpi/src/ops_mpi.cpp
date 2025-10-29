@@ -55,12 +55,11 @@ bool SizovDStringMismatchCountMPI::RunImpl() {
     }
   }
 
-  int global_result = 0;
   MPI_Reduce(&local_result, &global_result_, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Bcast(&global_result_, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-  global_result_ = global_result;
-  GetOutput() = global_result_;
+  if (rank == 0) {
+    GetOutput() = global_result_;
+  }
   return true;
 }
 
