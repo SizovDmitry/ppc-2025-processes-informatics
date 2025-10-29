@@ -2,10 +2,6 @@
 
 #include <mpi.h>
 
-#include <cstddef>
-#include <string>
-#include <string_view>
-
 #include "sizov_d_string_mismatch_count/common/include/common.hpp"
 #include "util/include/util.hpp"
 
@@ -31,6 +27,15 @@ bool SizovDStringMismatchCountMPI::PreProcessingImpl() {
 }
 
 bool SizovDStringMismatchCountMPI::RunImpl() {
+  int initialized = 0;
+  int finalized = 0;
+  MPI_Initialized(&initialized);
+  MPI_Finalized(&finalized);
+
+  if (initialized == 0 || finalized != 0) {
+    return false;
+  }
+
   int rank = 0;
   int size = 0;
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -38,6 +43,8 @@ bool SizovDStringMismatchCountMPI::RunImpl() {
 
   const int total_size = static_cast<int>(str_a_.size());
   if (total_size == 0) {
+    global_result_ = 0;
+    GetOutput() = 0;
     return true;
   }
 
@@ -48,9 +55,11 @@ bool SizovDStringMismatchCountMPI::RunImpl() {
     }
   }
 
+  int global_result = 0;
   MPI_Reduce(&local_result, &global_result_, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
   MPI_Bcast(&global_result_, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
+  global_result_ = global_result;
   GetOutput() = global_result_;
   return true;
 }

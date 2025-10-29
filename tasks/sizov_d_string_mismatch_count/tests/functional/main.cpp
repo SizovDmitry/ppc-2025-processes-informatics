@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <mpi.h>
 
-#include <array>
 #include <cstddef>
 #include <fstream>
 #include <stdexcept>
@@ -85,7 +84,7 @@ const auto kTaskList = std::tuple_cat(ppc::util::AddFuncTask<SizovDStringMismatc
 const auto kGtestValues = ppc::util::ExpandToValues(kTaskList);
 const auto kTestName = SizovDRunFuncTestsStringMismatchCount::PrintFuncTestName<SizovDRunFuncTestsStringMismatchCount>;
 
-INSTANTIATE_TEST_SUITE_P(CompareFromFile, SizovDRunFuncTestsStringMismatchCount, kGtestValues, kTestName);
+INSTANTIATE_TEST_SUITE_P(CompareFromFile, SizovDRunFuncTestsStringMismatchCount, kGtestValues, kTestName);  // NOLINT
 
 }  // namespace
 }  // namespace sizov_d_string_mismatch_count
