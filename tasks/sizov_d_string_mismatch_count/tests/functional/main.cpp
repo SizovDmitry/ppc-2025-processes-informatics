@@ -23,15 +23,16 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
 
  protected:
   void SetUp() override {
-    std::string abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_sizov_d_string_mismatch_count, "strings.txt");
+    std::string abs_path = "";
+    abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_sizov_d_string_mismatch_count, "strings.txt");
 
     std::ifstream file(abs_path);
     if (!file.is_open()) {
       throw std::runtime_error("Cannot open strings.txt");
     }
 
-    std::string a;
-    std::string b;
+    std::string a = "";
+    std::string b = "";
     std::getline(file, a);
     std::getline(file, b);
     file.close();
