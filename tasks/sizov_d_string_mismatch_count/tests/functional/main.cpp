@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <mpi.h>
 
 #include <cstddef>
+#include <cstdlib>
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -52,16 +52,33 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
     return input_data_;
   }
 
-  InType GetTestInputData() override {
-    return input_data_;
-  }
-
   bool CheckTestOutputData(OutType &output_data) override {
-    int rank = 0;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    if (!is_valid_ || rank != 0) {
+    if (!is_valid_) {
       return true;
     }
+
+    // Определение текущего MPI-процесса
+    int rank = 0;
+#if defined(_WIN32)
+    // Безопасный вариант для MSVC
+    char *rank_env = nullptr;
+    size_t len = 0;
+    if (_dupenv_s(&rank_env, &len, "OMPI_COMM_WORLD_RANK") == 0 && rank_env) {
+      rank = std::atoi(rank_env);
+      free(rank_env);
+    }
+#else
+    // POSIX-вариант для Linux / macOS / WSL
+    if (const char *rank_env = std::getenv("OMPI_COMM_WORLD_RANK")) {
+      rank = std::atoi(rank_env);
+    }
+#endif
+
+    // Проверяем результат только на rank == 0
+    if (rank != 0) {
+      return true;
+    }
+
     return output_data == expected_result_;
   }
 
