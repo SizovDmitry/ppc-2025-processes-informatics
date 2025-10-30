@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
+#include <mpi.h>
 
 #include <array>
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
@@ -25,7 +27,7 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
 
  protected:
   void SetUp() override {
-    std::string abs_path = "";
+    std::string abs_path;
     abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_sizov_d_string_mismatch_count, "strings.txt");
 
     std::ifstream file(abs_path);
@@ -74,17 +76,13 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
       free(rank_env);
     }
 #else
-    const char *env_ptr = std::getenv("OMPI_COMM_WORLD_RANK");
-    if (env_ptr != nullptr) {
-      // Скопировать значение из небезопасного буфера
-      std::string env_copy(env_ptr);
-      const char *rank_env = env_copy.c_str();
-
-      char *end_ptr = nullptr;
-      int64_t val = std::strtol(rank_env, &end_ptr, 10);
-      if (end_ptr != rank_env && *end_ptr == '\0') {
-        rank = static_cast<int>(val);
-      }
+    // Безопасное определение ранга без getenv()
+    int mpi_initialized = 0;
+    MPI_Initialized(&mpi_initialized);
+    if (mpi_initialized) {
+      MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    } else {
+      rank = 0;  // если MPI не инициализирован — считаем, что rank=0
     }
 
 #endif
