@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -24,15 +25,16 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
 
  protected:
   void SetUp() override {
-    std::string abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_sizov_d_string_mismatch_count, "strings.txt");
+    std::string abs_path = "";
+    abs_path = ppc::util::GetAbsoluteTaskPath(PPC_ID_sizov_d_string_mismatch_count, "strings.txt");
 
     std::ifstream file(abs_path);
     if (!file.is_open()) {
       throw std::runtime_error("Cannot open strings.txt");
     }
 
-    std::string a = "";
-    std::string b = "";
+    std::string a;
+    std::string b;
     std::getline(file, a);
     std::getline(file, b);
     file.close();
@@ -65,20 +67,26 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
     size_t len = 0;
     if (_dupenv_s(&rank_env, &len, "OMPI_COMM_WORLD_RANK") == 0 && rank_env) {
       char *end_ptr = nullptr;
-      long val = std::strtol(rank_env, &end_ptr, 10);
+      int64_t val = std::strtol(rank_env, &end_ptr, 10);
       if (end_ptr != rank_env && *end_ptr == '\0') {
         rank = static_cast<int>(val);
       }
       free(rank_env);
     }
 #else
-    if (const char *rank_env = std::getenv("OMPI_COMM_WORLD_RANK")) {
+    const char *env_ptr = std::getenv("OMPI_COMM_WORLD_RANK");
+    if (env_ptr != nullptr) {
+      // Скопировать значение из небезопасного буфера
+      std::string env_copy(env_ptr);
+      const char *rank_env = env_copy.c_str();
+
       char *end_ptr = nullptr;
-      long val = std::strtol(rank_env, &end_ptr, 10);
+      int64_t val = std::strtol(rank_env, &end_ptr, 10);
       if (end_ptr != rank_env && *end_ptr == '\0') {
         rank = static_cast<int>(val);
       }
     }
+
 #endif
 
     if (rank != 0) {

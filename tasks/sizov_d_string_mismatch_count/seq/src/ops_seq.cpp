@@ -1,5 +1,7 @@
 #include "sizov_d_string_mismatch_count/seq/include/ops_seq.hpp"
 
+#include <cstddef>
+
 #include "sizov_d_string_mismatch_count/common/include/common.hpp"
 
 namespace sizov_d_string_mismatch_count {
