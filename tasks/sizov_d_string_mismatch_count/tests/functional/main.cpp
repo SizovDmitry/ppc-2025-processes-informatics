@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <array>
 #include <cstddef>
 #include <cstdlib>
 #include <fstream>
@@ -30,7 +31,8 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
       throw std::runtime_error("Cannot open strings.txt");
     }
 
-    std::string a, b;
+    std::string a = "";
+    std::string b = "";
     std::getline(file, a);
     std::getline(file, b);
     file.close();
@@ -57,24 +59,28 @@ class SizovDRunFuncTestsStringMismatchCount : public ppc::util::BaseRunFuncTests
       return true;
     }
 
-    // Определение текущего MPI-процесса
     int rank = 0;
-#if defined(_WIN32)
-    // Безопасный вариант для MSVC
+#ifdef _WIN32
     char *rank_env = nullptr;
     size_t len = 0;
     if (_dupenv_s(&rank_env, &len, "OMPI_COMM_WORLD_RANK") == 0 && rank_env) {
-      rank = std::atoi(rank_env);
+      char *end_ptr = nullptr;
+      long val = std::strtol(rank_env, &end_ptr, 10);
+      if (end_ptr != rank_env && *end_ptr == '\0') {
+        rank = static_cast<int>(val);
+      }
       free(rank_env);
     }
 #else
-    // POSIX-вариант для Linux / macOS / WSL
     if (const char *rank_env = std::getenv("OMPI_COMM_WORLD_RANK")) {
-      rank = std::atoi(rank_env);
+      char *end_ptr = nullptr;
+      long val = std::strtol(rank_env, &end_ptr, 10);
+      if (end_ptr != rank_env && *end_ptr == '\0') {
+        rank = static_cast<int>(val);
+      }
     }
 #endif
 
-    // Проверяем результат только на rank == 0
     if (rank != 0) {
       return true;
     }
