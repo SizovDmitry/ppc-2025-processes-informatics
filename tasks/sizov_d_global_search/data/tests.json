@@ -1,0 +1,44 @@
+[
+  {
+    "name": "case_001_linear_inc",
+    "function": { "expression": "x" },
+    "problem": { "left": -5.0, "right": 5.0 },
+    "expected": { "argmins": [-5.0], "value": -5.0 }
+  },
+
+  {
+    "name": "case_002_linear_dec",
+    "function": { "expression": "-2*x + 3" },
+    "problem": { "left": -5.0, "right": 5.0 },
+    "expected": { "argmins": [5.0], "value": -7.0 }
+  },
+
+  {
+    "name": "case_003_quadratic",
+    "function": { "expression": "(x - 2)^2 + 1" },
+    "problem": { "left": 0.0, "right": 4.0 },
+    "expected": { "argmins": [2.0], "value": 1.0 }
+  },
+
+  {
+    "name": "case_004_abs_shift",
+    "function": { "expression": "abs(x - 1)" },
+    "problem": { "left": -4.0, "right": 4.0 },
+    "expected": { "argmins": [1.0], "value": 0.0 }
+  },
+  
+  {
+    "name": "case_005_exp",
+    "function": { "expression": "exp(x)" },
+    "problem": { "left": 0.0, "right": 2.0 },
+    "expected": { "argmins": [0.0], "value": 1.0 }
+  },
+
+  {
+    "name": "case_006_log_abs_shift",
+    "function": { "expression": "log(abs(x - 1) + 2)" },
+    "problem": { "left": -2.0, "right": 4.0 },
+    "expected": { "argmins": [1.0], "value": 0.6931471805599453 }
+  }
+
+]
