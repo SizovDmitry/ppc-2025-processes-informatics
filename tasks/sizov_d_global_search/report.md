@@ -61,6 +61,7 @@ $$
 
 ### Constraints
 
+- !!! This lab supports much more interesting test cases (including trigonometric functions, nested functions, functions with different arguments that achieve the minimum function), but due to CI limitations, I cannot include them in tests.json !!!;
 - `left < right`;
 - function values must be finite at sampling points;
 - accuracy $\varepsilon$ > 0.
@@ -128,11 +129,7 @@ zero.
 For each interval $[x_{i-1}, x_i]$, the Strongin characteristic is computed as
 
 $$
-R_i =
-M \bigl(x_i - x_{i-1}\bigr)
-+ \frac{\bigl(f(x_i) - f(x_{i-1})\bigr)^2}
-       {M \bigl(x_i - x_{i-1}\bigr)}
-- 2 \bigl(f(x_i) + f(x_{i-1})\bigr).
+R_i = M \bigl(x_i - x_{i-1}\bigr) + \frac{\bigl((x_i) - f(x_{i-1})\bigr)^2} {M \bigl(x_i - x_{i-1}\bigr)} - 2 \bigl(f(x_i) + f(x_{i-1})\bigr).
 $$
 
 Intervals with larger values of $R_i$ are considered more promising for
@@ -145,7 +142,7 @@ containing the global minimum.
 The interval with the maximum characteristic is selected:
 
 $$
-i^\ast = \operatorname{argmax}_i R_i,
+i^{\ast} = \arg\max_{i} R_i
 $$
 
 and the corresponding interval $[x_{i^\ast-1}, x_{i^\ast}]$ is refined.
@@ -157,9 +154,7 @@ and the corresponding interval $[x_{i^\ast-1}, x_{i^\ast}]$ is refined.
 A new sampling point is computed as
 
 $$
-x_{\text{new}} =
-\frac{x_{i-1} + x_i}{2}
-- \frac{f(x_i) - f(x_{i-1})}{2M}.
+x_{\text{new}} = \frac{x_{i-1} + x_i}{2} - \frac{f(x_i) - f(x_{i-1})}{2M}.
 $$
 
 If this point lies outside the interval $[x_{i-1}, x_i]$, the midpoint is used
@@ -228,10 +223,7 @@ For each assigned interval $[x_{i-1}, x_i]$, a process computes the Strongin
 characteristic
 
 $$
-R_i =
-M (x_i - x_{i-1})
-+ \frac{(f(x_i) - f(x_{i-1}))^2}{M (x_i - x_{i-1})}
-- 2 \bigl(f(x_i) + f(x_{i-1})\bigr).
+R_i = M (x_i - x_{i-1}) + \frac{(f(x_i) - f(x_{i-1}))^2}{M (x_i - x_{i-1})} - 2 \bigl(f(x_i) + f(x_{i-1})\bigr).
 $$
 
 Each process selects the maximum $R_i$ within its local subset and stores the
@@ -256,9 +248,7 @@ sequential version.
 After selecting the best interval, a new sampling point is computed as
 
 $$
-x_{\text{new}} =
-\frac{x_{i-1} + x_i}{2}
-- \frac{f(x_i) - f(x_{i-1})}{2M}.
+x_{\text{new}} = \frac{x_{i-1} + x_i}{2} - \frac{f(x_i) - f(x_{i-1})}{2M}.
 $$
 
 If this point lies outside $[x_{i-1}, x_i]$, the midpoint is used instead.
@@ -344,11 +334,7 @@ Both SEQ and MPI implementations:
 Performance tests were executed using a highly oscillatory function:
 
 $$
-f(x) =
-0.002\,x^2
-+ 5 \sin(30x)
-+ \sin\!\bigl(200 \sin(50x)\bigr)
-+ 0.1 \cos(300x)
+f(x) = 0.002\,x^2 + 5 \sin(30x) + \sin\!\bigl(200 \sin(50x)\bigr) + 0.1 \cos(300x)
 $$
 
 The goal of performance testing is **not** to assess numerical accuracy of the

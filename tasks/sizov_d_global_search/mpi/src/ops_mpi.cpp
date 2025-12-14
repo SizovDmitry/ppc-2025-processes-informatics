@@ -21,22 +21,8 @@ SizovDGlobalSearchMPI::SizovDGlobalSearchMPI(const InType &in) {
 
 bool SizovDGlobalSearchMPI::ValidationImpl() {
   const auto &p = GetInput();
-  if (!p.func) {
-    return false;
-  }
-  if (!(p.left < p.right)) {
-    return false;
-  }
-  if (!(p.accuracy > 0.0)) {
-    return false;
-  }
-  if (!(p.reliability > 0.0)) {
-    return false;
-  }
-  if (p.max_iterations <= 0) {
-    return false;
-  }
-  return true;
+
+  return p.func && (p.left < p.right) && (p.accuracy > 0.0) && (p.reliability > 0.0) && (p.max_iterations > 0);
 }
 
 bool SizovDGlobalSearchMPI::PreProcessingImpl() {
