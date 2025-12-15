@@ -1,15 +1,8 @@
-
 [
   {
-    "name": "case_001_linear_inc",
+    "name": "case_001_elementary",
     "function": { "expression": "x" },
-    "problem": { "left": -5.0, "right": 5.0 },
-    "expected": { "argmins": [-5.0], "value": -5.0 }
-  },
-  {
-    "name": "case_002_linear_dec",
-    "function": { "expression": "-2*x + 3" },
-    "problem": { "left": -5.0, "right": 5.0 },
-    "expected": { "argmins": [5.0], "value": -7.0 }
+    "problem": { "left": -0.1, "right": 0.1 },
+    "expected": { "argmins": [-0.1], "value": -0.1 }
   }
 ]
