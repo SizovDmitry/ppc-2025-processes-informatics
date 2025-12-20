@@ -130,8 +130,8 @@ bool SizovDBubbleSortMPI::RunImpl() {
     result.resize(n);
   }
   MPI_Bcast(result.data(), n, MPI_INT, 0, MPI_COMM_WORLD);
-  GetOutput() = result;
 
+  GetOutput() = result;
   return true;
 }
 
